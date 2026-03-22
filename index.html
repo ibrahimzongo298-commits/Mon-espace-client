@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BNP Paribas - Connexion Sécurisée</title>
+    <style>
+        body { background-color: #041e16; color: white; font-family: sans-serif; margin: 0; }
+        .hidden { display: none; }
+        .login-container { padding: 40px 20px; text-align: center; }
+        input { 
+            width: 80%; padding: 15px; margin: 10px 0; 
+            border-radius: 8px; border: 1px solid #00965e; 
+            background: #1a2e26; color: white; font-size: 16px;
+        }
+        .btn-login { 
+            background-color: #00965e; color: white; border: none; 
+            padding: 15px 40px; border-radius: 25px; font-weight: bold; margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loginPage" class="login-container">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/BNP_Paribas_logo.svg/1024px-BNP_Paribas_logo.svg.png" style="width: 150px; margin-bottom: 30px;">
+        <h2>Accès Client</h2>
+        <input type="text" id="identifiant" placeholder="Identifiant (ex: 123456)">
+        <input type="password" id="password" placeholder="Code Secret">
+        <br>
+        <button class="btn-login" onclick="verifierConnexion()">SE CONNECTER</button>
+        <p id="error" style="color: #ef4444; margin-top: 15px; font-size: 14px;"></p>
+    </div>
+
+    <div id="accountPage" class="hidden">
+        <div style="background-color: #00965e; padding: 15px; text-align: center; font-weight: bold;">
+            BIENVENUE, ZONGO
+        </div>
+        <div style="padding: 20px;">
+            <div style="background: #1e293b; border-radius: 12px; padding: 20px; border-left: 5px solid #ef4444;">
+                <p style="font-size: 12px; color: #94a3b8; margin: 0;">Titulaire</p>
+                <h3 style="margin: 5px 0;">ZONGO IBRAHIM</h3>
+                <p style="font-size: 12px; color: #94a3b8; margin: 15px 0 0 0;">IBAN</p>
+                <p style="font-family: monospace; margin: 5px 0;">FR76 3000 4028 1500 0123 4567 890</p>
+            </div>
+
+            <div style="background: white; color: #1e293b; border-radius: 12px; padding: 20px; margin-top: 20px; text-align: center;">
+                <p style="font-weight: bold;">SOLDE DISPONIBLE</p>
+                <h1 style="color: #00965e;">850 000 FCFA</h1>
+                <span style="background: #fee2e2; color: #b91c1c; padding: 5px 10px; border-radius: 5px; font-size: 12px; font-weight: bold;">STATUT : BLOQUÉ</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function verifierConnexion() {
+            const id = document.getElementById('identifiant').value;
+            const mdp = document.getElementById('password').value;
+            const error = document.getElementById('error');
+
+            // On définit un code secret (ex: 2026)
+            if (id === "admin" && mdp === "2026") {
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('accountPage').classList.remove('hidden');
+            } else {
+                error.innerText = "Identifiant ou code secret incorrect.";
+            }
+        }
+    </script>
+</body>
+</html>
